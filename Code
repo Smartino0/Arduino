@@ -1,0 +1,92 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 20, 4);
+
+const int exit_trigger = 3;
+const int trigger_10pt = 4;
+const int trigger_65pt = 5;
+
+int score_player_1 = 0;
+int score_player_2 = 0;
+int switch_player = 1;
+
+void setup() {
+  pinMode(exit_trigger, INPUT);
+  pinMode(trigger_10pt, INPUT);
+  pinMode(trigger_65pt, INPUT);
+  Serial.begin(115200);
+  lcd.init();
+}
+
+void loop() {
+  if (digitalRead(exit_trigger) == LOW) {
+    switch_player += 1;
+    Serial.println(switch_player);
+    delay(500);
+  }
+
+
+  if (switch_player == 1 || switch_player == 3 || switch_player == 5) {
+    lcd.backlight();
+    lcd.setCursor(0, 0);
+    lcd.print("Player 1: ");
+    lcd.setCursor(0, 1);
+    lcd.print("Score: " + String(score_player_1));
+    lcd.setCursor(0, 2);
+    lcd.print("Player 2: ");
+    lcd.setCursor(0, 3);
+    lcd.print("Score: " + String(score_player_2));
+    if (digitalRead(trigger_10pt) == LOW) {
+      score_player_1 += 10;
+      Serial.println(score_player_1);
+      delay(500);
+    }
+    if (digitalRead(trigger_65pt) == LOW) {
+      score_player_1 += 65;
+      Serial.println(score_player_1);
+      delay(500);
+    }
+  }
+
+  if (switch_player == 2 || switch_player == 4 || switch_player == 6) {
+    lcd.backlight();
+    lcd.setCursor(0, 0);
+    lcd.print("Player 1: ");
+    lcd.setCursor(0, 1);
+    lcd.print("Score: " + String(score_player_1));
+    lcd.setCursor(0, 2);
+    lcd.print("Player 2: ");
+    lcd.setCursor(0, 3);
+    lcd.print("Score: " + String(score_player_2));
+    if (digitalRead(trigger_10pt) == LOW) {
+      score_player_2 += 10;
+      Serial.println(score_player_2);
+      delay(500);
+    }
+    if (digitalRead(trigger_65pt) == LOW) {
+      score_player_2 += 65;
+      Serial.println(score_player_2);
+      delay(500);
+    }
+  }
+
+   if (switch_player == 7) {
+    lcd.backlight();
+    lcd.setCursor(0, 0);
+    lcd.print("     Game Over!");
+
+    if (score_player_1 > score_player_2) {
+      lcd.setCursor(4, 1);
+      lcd.print("Player 1 Wins!");
+    } else if (score_player_2 > score_player_1) {
+      lcd.setCursor(4, 1);
+      lcd.print("Player 2 Wins!");
+    } else {
+      lcd.setCursor(4, 1);
+      lcd.print("It's a Tie!");
+    }
+    lcd.setCursor(0, 3);
+    lcd.print("Score: P1 = " + String(score_player_1) + " P2 =" + String(score_player_2));
+  }
+}
